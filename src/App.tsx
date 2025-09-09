@@ -16,11 +16,14 @@ import * as commentsApi from './components/api/comments';
 import { User } from './types/User';
 import { Comment, CommentData } from './types/Comment';
 import { ERROR_MESSAGES } from './constants/ErrorMessages';
+import { is } from 'cypress/types/bluebird';
 
 export const App = () => {
   const [users, setUsers] = useState<User[]>([]);
 
-  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<number | undefined>(
+    undefined,
+  );
   const [userPosts, setUserPosts] = useState<Post[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -38,6 +41,8 @@ export const App = () => {
 
   useEffect(() => {
     if (selectedUserId) {
+      setSelectedPostId(null);
+      setUserPosts(null);
       setErrorMessage('');
       postsApi
         .getPostsByUserId(selectedUserId)
@@ -48,8 +53,6 @@ export const App = () => {
           setErrorMessage(ERROR_MESSAGES.Load);
         })
         .finally(() => setIsLoading(false));
-    } else {
-      setUserPosts(null);
     }
   }, [selectedUserId]);
 
@@ -99,11 +102,11 @@ export const App = () => {
   };
 
   const renderMainContent = () => {
-    if (selectedUserId === null) {
+    if (selectedUserId === undefined) {
       return <p data-cy="NoSelectedUser">No user selected</p>;
     }
 
-    if (isLoading) {
+    if (isLoading === true) {
       return <Loader />;
     }
 

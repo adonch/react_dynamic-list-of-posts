@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Loader } from './Loader';
 import { NewCommentForm } from './NewCommentForm';
 import { Post } from '../types/Post';
@@ -28,6 +28,11 @@ export const PostDetails: React.FC<PostDetailsProps> = ({
   function handleNewCommentFormToggle() {
     setDisplayNewCommentForm(!displayNewCommentForm);
   }
+
+  useEffect(() => {
+    setDisplayNewCommentForm(false);
+  }, [selectedPost.id]);
+
   return (
     <div className="content" data-cy="PostDetails">
       <div className="block">
@@ -37,62 +42,70 @@ export const PostDetails: React.FC<PostDetailsProps> = ({
       </div>
 
       <div className="block">
-        {isLoadingComments && <Loader />}
-        {commentsErrorMessage && (
+        {isLoadingComments ? (
+          <Loader />
+        ) : commentsErrorMessage ? (
           <div className="notification is-danger" data-cy="CommentsError">
             {commentsErrorMessage}
           </div>
-        )}
-        {comments.length === 0 ? (
-          <p className="title is-4" data-cy="NoCommentsMessage">
-            No comments yet
-          </p>
         ) : (
-          !isLoadingComments && (
-            <>
-              <p className="title is-4">Comments:</p>
+          // This fragment now correctly wraps all non-loading/non-error content
+          <>
+            {comments.length === 0 ? (
+              <p className="title is-4" data-cy="NoCommentsMessage">
+                No comments yet
+              </p>
+            ) : (
+              <>
+                <p className="title is-4">Comments:</p>
 
-              {comments.map(comment => (
-                <article
-                  className="message is-small"
-                  key={comment.id}
-                  data-cy="Comment"
-                >
-                  <div className="message-header">
-                    <a href={`mailto:${comment.email}`} data-cy="CommentAuthor">
-                      {comment.name}
-                    </a>
-                    <button
-                      data-cy="CommentDelete"
-                      type="button"
-                      className="delete is-small"
-                      aria-label="delete"
-                      onClick={() => onCommentDelete(comment.id)}
-                    />
-                  </div>
+                {comments.map(comment => (
+                  <article
+                    className="message is-small"
+                    key={comment.id}
+                    data-cy="Comment"
+                  >
+                    <div className="message-header">
+                      <a
+                        href={`mailto:${comment.email}`}
+                        data-cy="CommentAuthor"
+                      >
+                        {comment.name}
+                      </a>
+                      <button
+                        data-cy="CommentDelete"
+                        type="button"
+                        className="delete is-small"
+                        aria-label="delete"
+                        onClick={() => onCommentDelete(comment.id)}
+                      />
+                    </div>
 
-                  <div className="message-body" data-cy="CommentBody">
-                    {comment.body}
-                  </div>
-                </article>
-              ))}
-              {displayNewCommentForm ? (
-                <NewCommentForm
-                  onCommentAdd={onCommentAdd}
-                  isAddingComment={isAddingComment}
-                />
-              ) : (
-                <button
-                  data-cy="WriteCommentButton"
-                  type="button"
-                  className="button is-link"
-                  onClick={handleNewCommentFormToggle}
-                >
-                  Write a comment
-                </button>
-              )}
-            </>
-          )
+                    <div className="message-body" data-cy="CommentBody">
+                      {comment.body}
+                    </div>
+                  </article>
+                ))}
+              </>
+            )}
+
+            {/* This block is now outside the comments.length check and will render */}
+            {displayNewCommentForm ? (
+              <NewCommentForm
+                onCommentAdd={onCommentAdd}
+                isAddingComment={isAddingComment}
+              />
+            ) : (
+              <button
+                data-cy="WriteCommentButton"
+                type="button"
+                className="button is-link"
+                onClick={handleNewCommentFormToggle}
+              >
+                Write a comment
+              </button>
+            )}
+          </>
         )}
       </div>
     </div>
