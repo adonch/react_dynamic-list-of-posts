@@ -1,5 +1,3 @@
-import classNames from 'classnames';
-
 import 'bulma/css/bulma.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import './App.scss';
@@ -16,7 +14,7 @@ import * as commentsApi from './components/api/comments';
 import { User } from './types/User';
 import { Comment, CommentData } from './types/Comment';
 import { ERROR_MESSAGES } from './constants/ErrorMessages';
-import { is } from 'cypress/types/bluebird';
+import classNames from 'classnames';
 
 export const App = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -63,6 +61,7 @@ export const App = () => {
 
     setCommentsErrorMessage('');
     setIsLoadingComments(true);
+    setSelectedPostComments([]);
     commentsApi
       .getPostComments(selectedPostId)
       .then(setSelectedPostComments)
@@ -94,9 +93,9 @@ export const App = () => {
       .then(newComment => {
         setSelectedPostComments(prevComments => [...prevComments, newComment]);
       })
-      .catch(errorMessage => {
+      .catch(error => {
         setCommentsErrorMessage(ERROR_MESSAGES.CommentsLoad);
-        throw errorMessage;
+        throw error;
       })
       .finally(() => setIsAddingComment(false));
   };
@@ -135,7 +134,9 @@ export const App = () => {
       />
     );
   };
+
   const selectedPost = userPosts?.find(post => post.id === selectedPostId);
+
   return (
     <main className="section">
       <div className="container">
