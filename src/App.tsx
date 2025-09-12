@@ -13,7 +13,7 @@ import * as usersApi from './components/api/userApi';
 import * as commentsApi from './components/api/commentApi';
 import { User } from './types/User';
 import { Comment, CommentData } from './types/Comment';
-import { errorMesages } from './constants/ErrorMessages';
+import { ErrorMesages } from './constants/ErrorMessages';
 import classNames from 'classnames';
 
 export const App = () => {
@@ -48,7 +48,7 @@ export const App = () => {
           setUserPosts(posts);
         })
         .catch(() => {
-          setErrorMessage(errorMesages.Load);
+          setErrorMessage(ErrorMesages.Load);
         })
         .finally(() => setIsLoading(false));
     }
@@ -66,7 +66,7 @@ export const App = () => {
       .getPostComments(selectedPostId)
       .then(setSelectedPostComments)
       .catch(() => {
-        setCommentsErrorMessage(errorMesages.CommentsLoad);
+        setCommentsErrorMessage(ErrorMesages.CommentsLoad);
       })
       .finally(() => setIsLoadingComments(false));
   }, [selectedPostId]);
@@ -80,7 +80,7 @@ export const App = () => {
 
     commentsApi.deleteComment(commentId).catch(() => {
       setSelectedPostComments(originalComments);
-      setCommentsErrorMessage(errorMesages.CommentsLoad);
+      setCommentsErrorMessage(ErrorMesages.CommentsLoad);
     });
   };
 
@@ -94,7 +94,7 @@ export const App = () => {
         setSelectedPostComments(prevComments => [...prevComments, newComment]);
       })
       .catch(error => {
-        setCommentsErrorMessage(errorMesages.CommentsLoad);
+        setCommentsErrorMessage(ErrorMesages.CommentsLoad);
         throw error;
       })
       .finally(() => setIsAddingComment(false));
