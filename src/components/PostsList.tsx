@@ -6,14 +6,12 @@ type PostsListProps = {
   userPosts: Post[] | null;
   setSelectedPostId: (id: number | null) => void;
   selectedPostId: number | null;
-  setIsLoadingComments: (isLoading: boolean) => void;
 };
 
 export const PostsList: React.FC<PostsListProps> = ({
   userPosts,
   setSelectedPostId,
   selectedPostId,
-  setIsLoadingComments,
 }) => {
   const handleButtonClick = (postId: number) => {
     if (selectedPostId === postId) {
@@ -22,6 +20,7 @@ export const PostsList: React.FC<PostsListProps> = ({
       setSelectedPostId(postId);
     }
   };
+
   return (
     <div data-cy="PostsList">
       <p className="title">Posts:</p>
@@ -39,6 +38,7 @@ export const PostsList: React.FC<PostsListProps> = ({
         <tbody>
           {userPosts?.map(post => {
             const isSelected = selectedPostId === post.id;
+
             return (
               <tr data-cy="Post" key={post.id}>
                 <td data-cy="PostId">{post.id}</td>
